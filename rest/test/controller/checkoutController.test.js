@@ -51,7 +51,7 @@ describe('Checkout usando Mocks para testar a API', () => {
         });
     });
 
-    it('Usando Mocks: Não deve conseguir realizar checkout por causa do toekn invalido, deve informar 401', async () => {
+    it('Usando Mocks: Não deve conseguir realizar checkout por causa do token invalido, deve informar 401', async () => {
         const checkoutServiceMock = sinon.stub(checkoutService, 'checkout');
         checkoutServiceMock.throws(new Error('Token inválido'));
         const resposta = await request(app)
@@ -102,13 +102,7 @@ describe('Checkout usando Mocks para testar a API', () => {
             .send({
                 items: [{ productId: 1, quantity: 2 }], 
                 freight: 10,
-                paymentMethod: 'cartao',
-                cardData: {
-                    number: 1234,
-                    name: 'Singrid Palmeira',
-                    expiry: '12/27',
-                    cvv: '123'
-                }
+                paymentMethod: 'credit_card'
             });
         expect(resposta.status).to.equal(400);
         expect(resposta.body).to.have.property('error', 'Dados do cartão obrigatórios para pagamento com cartão');
