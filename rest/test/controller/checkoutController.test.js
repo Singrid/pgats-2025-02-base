@@ -3,24 +3,14 @@ const app = require('../../../rest/app');
 const checkoutService = require('../../../src/services/checkoutService');
 const sinon = require('sinon');
 const { expect } = require('chai');
-const userService = require('../../../src/services/userService');
 
 describe('Checkout usando Mocks para testar a API', () => {
+   
     before(async () => {
-        const respostaRegister = await request(app)
-            .post('/api/users/register')
-            .send({
-                name: 'Singrid Palmeira',
-                email: 'singrid@email.com',
-                password: '123456'
-            });
-        });
-
-    beforeEach(async () => {
         const respostaLogin = await request(app)
             .post('/api/users/login')
             .send({
-                email: 'singrid@email.com',
+                email: 'alice@email.com',
                 password: '123456'
             });
 
@@ -62,7 +52,8 @@ describe('Checkout usando Mocks para testar a API', () => {
     });
 
     it('Usando Mocks: Não deve conseguir realizar checkout por causa do toekn invalido, deve informar 401', async () => {
-
+        const checkoutServiceMock = sinon.stub(checkoutService, 'checkout');
+        checkoutServiceMock.throws(new Error('Token inválido'));
         const resposta = await request(app)
             .post('/api/checkout')
             .set('Authorization', `Bearer token + '123'`)
@@ -81,13 +72,49 @@ describe('Checkout usando Mocks para testar a API', () => {
         expect(resposta.body).to.deep.equal({error: 'Token inválido'});
     });
 
+    it('Usando Mocks: Passando id de produto invalido, não deve conseguir realizar checkout, deve informar 400', async () => {
+        const checkoutServiceMock = sinon.stub(checkoutService, 'calculateTotal');
+        checkoutServiceMock.throws(new Error('Produto não encontrado'));
+        const resposta = await request(app)
+            .post('/api/checkout')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                items: [{ productId: 3, quantity: 2 }], 
+                freight: 30,
+                paymentMethod: 'boleto',
+                cardData: {
+                    number: '1234.4567.8901.1121',
+                    name: 'Singrid Palmeira',
+                    expiry: '12/27',
+                    cvv: '123'
+                }
+            });
+        expect(resposta.status).to.equal(400);
+        expect(resposta.body).to.deep.equal({error: 'Produto não encontrado'});
+    });
 
-
-
+    it('Usando Mocks: Passando dados de cartão invalido ao fazer checkout com cartão, deve informar 400', async () => {
+        const checkoutServiceMock = sinon.stub(checkoutService, 'checkout');
+        checkoutServiceMock.throws(new Error('Dados do cartão obrigatórios para pagamento com cartão'));
+        const resposta = await request(app)
+            .post('/api/checkout')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                items: [{ productId: 1, quantity: 2 }], 
+                freight: 10,
+                paymentMethod: 'cartao',
+                cardData: {
+                    number: 1234,
+                    name: 'Singrid Palmeira',
+                    expiry: '12/27',
+                    cvv: '123'
+                }
+            });
+        expect(resposta.status).to.equal(400);
+        expect(resposta.body).to.have.property('error', 'Dados do cartão obrigatórios para pagamento com cartão');
+    });
 
     afterEach(() => {
 		sinon.restore();
 	});
-
-
 })
