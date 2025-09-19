@@ -29,7 +29,7 @@ jobs:
       run: start-rest &
 
     - name: Esperar a API estar Funcionando
-      run: sleep 5
+      run: sleep 8
 
     - name: Rodar os testes de API via HTTP
       run: npm run test-rest-external

@@ -7,16 +7,6 @@ const caminhoLogin = '/api/users/login';
 const caminhoRegistro = '/api/users/register';
 
 describe('Testando a API externa de Usuario, Login e Registro', () => {
-    // beforeEach(async () => {
-    //     const respostaLogin = await request(url)
-    //         .post('/api/users/login')
-    //         .send({
-    //             email: 'bob@email.com',
-    //             password: '123456'
-    //         });
-
-    //     token = respostaLogin.body.token;
-    // });
 
     it('Registrar um usuario com sucesso, deve retornar 201', async () => {
         const resposta = await request(url)
