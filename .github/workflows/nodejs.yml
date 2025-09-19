@@ -24,3 +24,12 @@ jobs:
 
     - name: Rodar os testes de API via Controller
       run: npm run test-rest-controller
+
+    - name: Subir a API rest
+      run: start-rest &
+
+    - name: Esperar a API estar Funcionando
+      run: sleep 5
+
+    # - name: Rodar os testes de API via HTTP
+    #   run: npm run test-rest-external
