@@ -5,7 +5,6 @@ const caminhoLogin = '/api/users/login';
 const caminhoRegistro = '/api/users/register';
 
 describe('Testando a API externa de Usuario, Login e Registro', () => {
-
     it('Registrar um usuario com sucesso, deve retornar 201', async () => {
         const resposta = await request(url)
             .post(caminhoRegistro)
