@@ -1,7 +1,5 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const users = require('../../../src/models/user');
-
 const url = 'http://localhost:3000';
 const caminhoLogin = '/api/users/login';
 const caminhoRegistro = '/api/users/register';
